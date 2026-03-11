@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Dashboard</title>
+
+<!-- FONT AWESOME -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- CHART JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root{
+    --bg:#F4F7FB;
+    --card:#ffffff;
+    --text:#1E293B;
+    --sidebar:#0F172A;
+    --primary:#2563EB;
+}
+
+body.dark{
+    --bg:#020617;
+    --card:#020617;
+    --text:#E5E7EB;
+    --sidebar:#020617;
+    --primary:#38BDF8;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    transition:.3s;
+}
+
+/* SIDEBAR */
+.side-menu{
+    position:fixed;
+    width:240px;
+    height:100vh;
+    background:var(--sidebar);
+    color:white;
+    transition:.3s;
+}
+.side-menu.collapsed{
+    width:80px;
+}
+.side-menu h1{
+    text-align:center;
+    padding:20px 0;
+}
+.side-menu ul li{
+    list-style:none;
+    padding:15px 25px;
+    display:flex;
+    gap:15px;
+    cursor:pointer;
+}
+.side-menu.collapsed span{
+    display:none;
+}
+
+/* CONTAINER */
+.container{
+    margin-left:240px;
+    padding:20px;
+    transition:.3s;
+}
+.container.full{
+    margin-left:80px;
+}
+
+/* HEADER */
+.header{
+    background:var(--card);
+    padding:15px 20px;
+    border-radius:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.header button{
+    background:var(--primary);
+    color:white;
+    border:none;
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* CARDS */
+.cards{
+    margin-top:25px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+.card{
+    background:var(--card);
+    padding:20px;
+    border-radius:18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.card i{
+    font-size:30px;
+    background:var(--primary);
+    color:white;
+    padding:15px;
+    border-radius:12px;
+}
+
+/* CHART */
+.chart-box{
+    margin-top:30px;
+    background:var(--card);
+    padding:20px;
+    border-radius:18px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="side-menu" id="sidebar">
+    <h1>Brand</h1>
+    <ul>
+        <li><i class="fa fa-chart-line"></i><span>Dashboard</span></li>
+        <li><i class="fa fa-user-graduate"></i><span>Students</span></li>
+        <li><i class="fa fa-chalkboard-user"></i><span>Teachers</span></li>
+        <li><i class="fa fa-school"></i><span>Schools</span></li>
+        <li><i class="fa fa-gear"></i><span>Settings</span></li>
+    </ul>
+</div>
+
+<!-- MAIN -->
+<div class="container" id="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <button onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+        <button onclick="toggleTheme()"><i class="fa fa-moon"></i></button>
+    </div>
+
+    <!-- CARDS -->
+    <div class="cards">
+        <div class="card">
+            <div><h2>2194</h2><p>Students</p></div>
+            <i class="fa fa-user-graduate"></i>
+        </div>
+        <div class="card">
+            <div><h2>120</h2><p>Teachers</p></div>
+            <i class="fa fa-chalkboard-user"></i>
+        </div>
+        <div class="card">
+            <div><h2>$3050</h2><p>Income</p></div>
+            <i class="fa fa-dollar-sign"></i>
+        </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-box">
+        <h3>Monthly Income</h3>
+        <canvas id="incomeChart"></canvas>
+    </div>
+</div>
+
+<script>
+/* DARK / LIGHT */
+function toggleTheme(){
+    document.body.classList.toggle("dark");
+}
+
+/* SIDEBAR */
+function toggleSidebar(){
+    document.getElementById("sidebar").classList.toggle("collapsed");
+    document.getElementById("container").classList.toggle("full");
+}
+
+/* CHART */
+new Chart(document.getElementById("incomeChart"),{
+    type:"line",
+    data:{
+        labels:["Jan","Feb","Mar","Apr","May","Jun"],
+        datasets:[{
+            label:"Income",
+            data:[1200,1900,3000,2500,2800,3500],
+            borderColor:"#2563EB",
+            fill:false
+        }]
+    }
+});
+</script>
+
+</body>
+</html>

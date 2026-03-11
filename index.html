@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIDAA Smart TV Interface</title>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-p7b4C3Wc...snip..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    color: white;
+    height: 100vh;
+    background: linear-gradient(135deg, #0f1b3d, #1c2b5a);
+    position: relative;
+  }
+
+  /* Hamburger/Menu icon */
+  .menu-icon {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 5;
+    transition: 0.3s;
+  }
+
+  .menu-icon:hover {
+    color: #00f2ff;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: rgba(15,27,61,0.7); /* transparency */
+    position: fixed;
+    left: -250px; /* hidden by default */
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    gap: 10px;
+    transition: left 0.3s ease;
+    z-index: 4;
+    backdrop-filter: blur(10px);
+  }
+
+  .sidebar.show {
+    left: 0;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 20px;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+    position: relative;
+  }
+
+  .sidebar-item i { font-size: 20px; }
+
+  .sidebar-item:nth-child(1) { background: #ff595e; }
+  .sidebar-item:nth-child(2) { background: #1982c4; }
+  .sidebar-item:nth-child(3) { background: #6a4c93; }
+  .sidebar-item:nth-child(4) { background: #ffca3a; }
+  .sidebar-item:nth-child(5) { background: #8ac926; }
+
+  .sidebar-item:hover { transform: scale(1.05); box-shadow: 0 0 20px #00f2ff; }
+
+  /* Submenu */
+  .submenu {
+    max-height: 0;
+    overflow: hidden;
+    flex-direction: column;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    margin-left: 20px;
+    margin-top: 5px;
+    transition: max-height 0.3s ease;
+  }
+
+  .submenu-item {
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 8px;
+    margin: 2px 0;
+  }
+
+  .submenu-item:hover { background: rgba(255,255,255,0.2); }
+
+  /* Main content */
+  .main {
+    margin-left: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left 0.3s ease;
+  }
+
+  .main.shift { margin-left: 220px; }
+
+  /* Top section */
+  .top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .top-section h1 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #ff42a4;
+  }
+
+  .connect {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background: #00f2ff;
+    color: #0f1b3d;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .connect:hover { transform: scale(1.1); box-shadow: 0 0 15px #00f2ff; }
+
+  /* Apps Section */
+  .apps { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; }
+  .apps::-webkit-scrollbar { display: none; }
+
+  .app {
+    min-width: 120px; height: 120px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    display: flex; justify-content: center; align-items: center;
+    font-weight: bold; cursor: pointer;
+    transition: 0.3s; flex-shrink: 0; text-align: center;
+  }
+
+  .app:nth-child(1) { background: #ff595e; }
+  .app:nth-child(2) { background: #1982c4; }
+  .app:nth-child(3) { background: #6a4c93; }
+  .app:nth-child(4) { background: #ffca3a; }
+  .app:nth-child(5) { background: #8ac926; }
+  .app:nth-child(6) { background: #ff924c; }
+  .app:nth-child(7) { background: #6a4c93; }
+  .app:nth-child(8) { background: #4cc9f0; }
+  .app:nth-child(9) { background: #f72585; }
+  .app:nth-child(10) { background: #7209b7; }
+
+  .app:hover { transform: scale(1.1); box-shadow: 0 0 20px #00f2ff; }
+
+  /* Inputs Section */
+  .inputs { display: flex; gap: 20px; margin-top: 20px; overflow-x: auto; }
+
+  .input {
+    min-width: 100px; height: 80px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    display: flex; justify-content: center; align-items: center;
+    cursor: pointer; flex-shrink: 0; transition: 0.3s;
+    font-weight: bold; text-align: center;
+  }
+
+  .input:nth-child(1) { background: #ff595e; }
+  .input:nth-child(2) { background: #1982c4; }
+  .input:nth-child(3) { background: #6a4c93; }
+  .input:nth-child(4) { background: #ffca3a; }
+  .input:nth-child(5) { background: #8ac926; }
+
+  .input:hover { transform: scale(1.05); box-shadow: 0 0 15px #ff42a4; }
+</style>
+</head>
+<body>
+
+<!-- Hamburger Menu Icon -->
+<div class="menu-icon"><i class="fas fa-bars"></i></div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-item" data-menu="home-sub"><i class="fas fa-home"></i> Home</div>
+  <div class="submenu" id="home-sub">
+    <div class="submenu-item">Dashboard</div>
+    <div class="submenu-item">Profile</div>
+  </div>
+
+  <div class="sidebar-item" data-menu="tv-sub"><i class="fas fa-tv"></i> TV Channels</div>
+  <div class="submenu" id="tv-sub">
+    <div class="submenu-item">Local</div>
+    <div class="submenu-item">International</div>
+  </div>
+
+  <div class="sidebar-item" data-menu="movies-sub"><i class="fas fa-video"></i> Movies</div>
+  <div class="submenu" id="movies-sub">
+    <div class="submenu-item">Action</div>
+    <div class="submenu-item">Comedy</div>
+    <div class="submenu-item">Drama</div>
+  </div>
+
+  <div class="sidebar-item" data-menu="music-sub"><i class="fas fa-music"></i> Music</div>
+  <div class="submenu" id="music-sub">
+    <div class="submenu-item">Pop</div>
+    <div class="submenu-item">Rock</div>
+    <div class="submenu-item">Jazz</div>
+  </div>
+
+  <div class="sidebar-item" data-menu="settings-sub"><i class="fas fa-cog"></i> Settings</div>
+  <div class="submenu" id="settings-sub">
+    <div class="submenu-item">WiFi</div>
+    <div class="submenu-item">Display</div>
+    <div class="submenu-item">Account</div>
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="main">
+  <div class="top-section">
+    <h1>VIDAA</h1>
+    <button class="connect">Connect</button>
+  </div>
+
+  <div class="apps">
+    <div class="app">Netflix</div>
+    <div class="app">YouTube</div>
+    <div class="app">Prime Video</div>
+    <div class="app">CANAL+</div>
+    <div class="app">DSV Stream</div>
+    <div class="app">Deezer</div>
+    <div class="app">VOD</div>
+    <div class="app">UEFA.tv</div>
+    <div class="app">News</div>
+    <div class="app">RedBull TV</div>
+  </div>
+
+  <div class="inputs">
+    <div class="input">TV Channels</div>
+    <div class="input">NIZEYIMANA</div>
+    <div class="input">HDMI 1</div>
+    <div class="input">HDMI 2</div>
+    <div class="input">AV</div>
+  </div>
+</div>
+
+<script>
+  // Toggle sidebar with menu icon
+  const menuIcon = document.querySelector('.menu-icon');
+  const sidebar = document.querySelector('.sidebar');
+  const mainContent = document.querySelector('.main');
+
+  menuIcon.addEventListener('click', () => {
+    sidebar.classList.toggle('show');
+    mainContent.classList.toggle('shift');
+  });
+
+  // Sidebar menu toggle
+  const sidebarItems = document.querySelectorAll('.sidebar-item');
+
+  sidebarItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const menuId = item.dataset.menu;
+      const submenu = document.getElementById(menuId);
+      if (submenu.style.maxHeight) {
+        submenu.style.maxHeight = null;
+      } else {
+        document.querySelectorAll('.submenu').forEach(sm => sm.style.maxHeight = null);
+        submenu.style.maxHeight = submenu.scrollHeight + "px";
+      }
+    });
+  });
+
+  // Click effects
+  document.querySelectorAll('.app').forEach(app => {
+    app.addEventListener('click', () => alert('Opening ' + app.textContent));
+  });
+
+  document.querySelectorAll('.input').forEach(input => {
+    input.addEventListener('click', () => alert('Switching to ' + input.textContent));
+  });
+
+  document.querySelector('.connect').addEventListener('click', () => alert('Connecting to WiFi...'));
+</script>
+</body>
+</html>
